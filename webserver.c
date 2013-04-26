@@ -73,7 +73,7 @@ int handle_http(int clisockfd){
 	
 	printf("home: %s\n", home);
 	/*	size_t *uploadfile_ptr = &uploadfile;*/
-	bzero(&req, sizeof(req));
+	bzero(req, BUFSIZE);
 
 	total = 0;
 	while((bytes = read(clisockfd, req + total, BUFSIZE - total)) > 0) {
@@ -125,7 +125,7 @@ int handle_http(int clisockfd){
 			}								
 		}
 	
-		bzero(&req_copy, BUFSIZE);		
+		bzero(req_copy, BUFSIZE);		
 		/*identifying content length*/
 		if ((ptr=strstr(req, "Content-Length:"))){
 			memcpy(req_copy, req, BUFSIZE);
