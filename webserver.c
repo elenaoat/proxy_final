@@ -43,14 +43,14 @@ int handle_http(int clisockfd){
 	int bytes, i;
 	int type = 0, total = 0;
 	long length;
-	char req[BUFSIZE];
+	char * req = malloc(BUFSIZE);
 	char *filename, *filenamed;
 	char *file_contents;
 	FILE *doc, *doc_upload;
 	char *response;
 	size_t response_size;
 	size_t *response_size_ptr = &response_size;
-	char req_copy[BUFSIZE];
+	char * req_copy = malloc(BUFSIZE);
 	int headers_size;
 	char *double_newline = 0;
 	int content_length;
