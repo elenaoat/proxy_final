@@ -67,6 +67,8 @@ int handle_http(int clisockfd){
 	/*get currently working directory*/
 	if (getcwd(home, PATHMAX) == NULL){
 		perror("getcwd error\n");
+		free(req);
+		free(req_copy);
 		return -1;
 	} 
 	//home[strlen(home)] = '\0';
@@ -168,6 +170,8 @@ int handle_http(int clisockfd){
 
 	if (type == 0){
 		printf("This type of request cannot be handled by this server\n");
+		free(req);
+		free(req_copy);
 		return -1;
 	}
 	
@@ -241,6 +245,8 @@ int handle_http(int clisockfd){
 			break;
 	}
 	close(clisockfd);
+	free(req);
+	free(req_copy);
 	return 0;
 
 }
