@@ -226,12 +226,12 @@ int handle_http(int clisockfd){
 				fclose(doc);	
 				doc_upload = fopen(home, "w+");
 				fwrite(uploadfile_contents, content_length, 1, doc_upload);
-				send_status(clisockfd, "200 OK", strlen("OK") + 1);
+				send_status(clisockfd, "200 OK");
 			} else if (!doc) {
 				printf("New file will be created\n");
 				doc_upload = fopen(home, "w");
 			 	fwrite(uploadfile_contents, content_length, 1, doc_upload);	
-				send_status(clisockfd, "201 Created", strlen("Created") + 1);
+				send_status(clisockfd, "201 Created");
 			}
 			
 			fclose(doc_upload);				
@@ -245,8 +245,9 @@ int handle_http(int clisockfd){
 
 }
 
-void send_status(int clisockfd, char *status, size_t status_size){
+void send_status(int clisockfd, char *status){
 	int bytes;
+	size_t status_size = strlen(status);
 	while((bytes=write(clisockfd, status, status_size)) > 0){
 		if (bytes == status_size){
 			break;
