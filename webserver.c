@@ -57,12 +57,11 @@ int handle_http(int clisockfd){
 	char *ptr, *uploadfile_contents;
 	char *response_to_client;
 	char home[PATHMAX];
-	//char final[PATHMAX];
 	char *ptr1, *ptr2, *domain;
 	size_t domain_size;
 	int query_type = 1;
 	printf("gets here");
-	//bzero(final, PATHMAX);
+	
 	bzero(home, PATHMAX);
 	/*get currently working directory*/
 	if (getcwd(home, PATHMAX) == NULL){
@@ -132,9 +131,6 @@ int handle_http(int clisockfd){
 		if ((ptr=strstr(req, "Content-Length:"))){
 			memcpy(req_copy, req, BUFSIZE);
 		
-			/*for (i=0; i<BUFSIZE; i++){
-				req_copy[i] = req[i];		
-			}*/
 			if ((strtok(ptr, " "))){ 
 				 content_length = strtol(strtok(NULL, "\r\n\r\n"), NULL, 10);
 				 printf("Content-length: %d\n", content_length);
@@ -320,10 +316,6 @@ int listening(char *hostname, char *service){
 			continue;
 		}
 
-		/*struct sockaddr_in *sin = (struct sockaddr_in *)res_for_listen->ai_addr;
-		char add[30];
-		const char *ret = inet_ntop(res_for_listen->ai_family, &(sin->sin_addr), add, sizeof(add));
-		printf("The address of the server to which we connect: %s\n\n", ret);*/
 		setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &turn_on, sizeof(turn_on));
 		
 		/*bind returns zero on success
@@ -343,9 +335,6 @@ int listening(char *hostname, char *service){
 		close(sockfd);
 	} while ((res=res->ai_next) != NULL);
 
-	/*if (res){
-		res_for_listen = res;
-	}*/
 	/*handling of exceptional situations*/
 	if (res == NULL){
 		fprintf(stderr, "Failed to create any socket\n");
@@ -373,7 +362,7 @@ int daemon_init(char *program_name, int facility){
 		return 1;
 	}
 	/*changing working directory*/
-	chdir("/");
+	//chdir("/");
 
 	/*closing file descriptors*/
 	for(i=0; i<64; i++){
@@ -383,7 +372,7 @@ int daemon_init(char *program_name, int facility){
 	/*redirect stdin, stdout, stderr to /dev/null*/
 	open("/dev/null", O_RDONLY);
 	open("/dev/nul", O_RDWR);
-	open("dev/null", O_RDWR);
+	open("/dev/null", O_RDWR);
 
 	openlog(program_name, LOG_PID, facility);
 
@@ -404,8 +393,7 @@ int main(int argc, char **argv){
 	}	
 
 	/*comment out the daemon functionality for debugging purposes*/
-	/*daemon_init(argv[0], 0);*/
-	/*send_hello();*/
+//	daemon_init(argv[0], 0);
 	/*get listening socket file descriptor*/
 	sockfd = listening(argv[1], argv[2]);
 
@@ -418,36 +406,22 @@ int main(int argc, char **argv){
 				return -1;			
 			}
 			printf ("A client %s has connected\n", sock_ntop((struct sockaddr *) &cliaddr, len));
-			int r;		
-			if ((r=(childpid = fork())) == 0){
+			if ((childpid = fork()) == 0){
 				/*closing listening socket inside child process*/
 				close(sockfd);
-/*				while ((nread = read(clisockfd, buf, BUFSIZE)) > 0){
-					printf("Read %d bytes from client: %s \n", nread, sock_ntop((struct sockaddr *) &cliaddr, len));		
-		}		*/
 				printf("gets here first, clisockfd: %d\n", clisockfd);
 			
 				if (handle_http(clisockfd) < 0){
 					fprintf(stderr, "Failed to handle http request\n");
 				}				
 				exit(0);
-			} else {
-				fprintf(stderr, "%d\n",r );
-				perror("fork error\n");
 			}
 			/*closing connnection socket in the parent process*/
 		
 			close(clisockfd);
 		}	
 		
-/*			printf ("A client %s has connected\n", sock_ntop((struct sockaddr *) &cliaddr, len));*/		
 	}	
-/*		while ((nread = read(clisockfd, buf, BUFSIZE)) > 0){
-			printf("Read %d bytes from client: %s \n", nread, sock_ntop((struct sockaddr *) &cliaddr, len));		
-		}
-		close(clisockfd);
-	}
-*/
 	closelog();
 	return 0;
 

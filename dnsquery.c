@@ -111,7 +111,7 @@ char* dns_query(char *domain, int query_type, size_t *response_to_client_size){
 	/*ipaddress = "2001:4860:4860::8888";*/
 
 	
-	/*{ */
+	/*{*/
 		/*struct sockaddr_in6 dest_address;*/
 		/*sockfd = socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);*/
 		/*setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));*/
@@ -134,16 +134,16 @@ char* dns_query(char *domain, int query_type, size_t *response_to_client_size){
 	/*Uncomment the lines inside the IPv4 DNS server to use IPv4 address DNS
 	 * address */
 		
-		/*[>	create a UDP socket<]*/
+		/*	create a UDP socket*/
 		sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 		/*set socket flags for timeout*/
 		setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 		
 
-		/*ipaddress = "208.67.222.222";*/
-		/*ipaddress = "195.148.124.10";*/
+		/*[>ipaddress = "208.67.222.222";<]*/
+		/*[>ipaddress = "195.148.124.10";<]*/
 		ipaddress = "8.8.8.8";
-		/*ipaddress = "4.85.23.113";*/
+		/*[>ipaddress = "4.85.23.113";<]*/
 
 		if(sockfd < 0){
 			perror("error creating socket\n");
@@ -172,7 +172,7 @@ char* dns_query(char *domain, int query_type, size_t *response_to_client_size){
 	printf("bytes sent to DNS server: %d\n", bytes);	
 	if (bytes == -1){
 		perror("sendto error\n");
-		return "\0";
+		return http_response(0, strlen("error sending request to server. Network unreachable"), "error sending request to server. Network unreachable", response_to_client_size);
 	}
 	
 	bzero(buff_rec, BUF_SIZE);
